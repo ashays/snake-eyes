@@ -13,7 +13,7 @@ class Room extends Component {
         chat: []
     }
     this.receive = this.receive.bind(this);
-    this.sendChat = this.sendChat.bind(this);
+    this.sendChatMessage = this.sendChatMessage.bind(this);
   }
 
   componentDidMount() {
@@ -42,7 +42,7 @@ class Room extends Component {
     connection.on('open', () => {
         if (this.state.isHost) {
             console.log("Connection opened, ", connection);
-            this.send([connection], {type: "log", message: `Hello from your host ${this.props.id}`});
+            this.send({type: "log", message: `Hello from your host ${this.props.id}`}, [connection]);
             this.setState((state, props) => {
                 return ({
                     connections: {...state.connections, [connection.peer]: connection}, 
@@ -50,14 +50,10 @@ class Room extends Component {
                 });
             }, () => {
                 console.log("Sending participants: ", this.state.participants);
-                this.send(this.state.connections, {type: "participants", participants: this.state.participants});
+                this.send({type: "participants", participants: this.state.participants});
             });
         } else {
-            this.setState((state, props) => {
-                let connections = state.connections;
-                connections[connection.peer] = connection;
-                return ({connections});
-            });
+            this.setState((state, props) => ({connections: {...state.connections, [connection.peer]: connection}}));
         }
     });
 
@@ -80,7 +76,7 @@ class Room extends Component {
                 return ({connections, participants});
             }, () => {
                 console.log("Sending participants: ", this.state.participants);
-                this.send(this.state.connections, {type: "participants", participants: this.state.participants});
+                this.send({type: "participants", participants: this.state.participants});
             });
         }
     });
@@ -89,7 +85,7 @@ class Room extends Component {
     connection.on('data', this.receive);
   }
 
-  send(connections, data) {
+  send(data, connections = this.state.connections) {
       for (const id in connections) {
           connections[id].send(data);
       }
@@ -104,34 +100,27 @@ class Room extends Component {
             this.setState({participants: data.participants});
             break;
         case "chat":
-            this.setState({chat: data.chat});
-            break;
-        case "message":
-            console.log("message received", data.message);
-            this.setState((state, props) => ({chat : [...state.chat, data.message]}), () => {
-                console.log("sending chat", this.state.chat);
-                this.send(this.state.connections, {type: "chat", chat: this.state.chat});
-            });
+            this.addToChat(data.message);
             break;
         default:
           console.log("Received ", data);
       }
   }
 
-  componentWillUnmount() {
-
+  addToChat(message) {
+      if (this.state.isHost) {
+          this.send({type: "chat", message});
+      }
+      this.setState((state, props) => ({chat : [...state.chat, message]}));
   }
 
-  sendChat(event) {
+  sendChatMessage(event) {
       event.preventDefault();
       let message = event.target.elements.message.value;
       if (this.state.isHost) {
-        this.setState((state, props) => ({chat : [...state.chat, message]}), () => {
-            console.log("sending chat", this.state.chat);
-            this.send(this.state.connections, {type: "chat", chat: this.state.chat});
-        });
+          this.addToChat(message);
       } else {
-          this.send(this.state.connections, {type: "message", message: message});
+        this.send({type: "chat", message});
       }
       event.target.elements.message.value = "";
   }
@@ -141,17 +130,17 @@ class Room extends Component {
         (<li key={key}>{key}</li>)
       );
       const chat = this.state.chat.map((message, i) => 
-        (<span key={i}>{message}</span>)
+        (<div key={i}>{message}</div>)
       );
       return (
         <div>
             <h1>Room</h1>
             <ul>{participantList}</ul>
-            <form onSubmit={this.sendChat} autoComplete="off">
+            <div className="chat">{chat}</div>
+            <form onSubmit={this.sendChatMessage} autoComplete="off">
                 <input type="text" id="message" name="message" placeholder="Enter Message" />
                 <input type="submit" value="Send" />
             </form>
-            <div className="chat">{chat}</div>
         </div>
       );
   }
