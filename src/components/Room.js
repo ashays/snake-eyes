@@ -9,10 +9,11 @@ class Room extends Component {
         isHost: this.props.id === this.props.match.params.id,
         connections: {},
         turn: -1,
-        participants: [{id: this.props.id}],
+        participants: this.props.id ? {[this.props.id] : {}} : {},
         chat: []
     }
     this.receive = this.receive.bind(this);
+    this.sendChat = this.sendChat.bind(this);
   }
 
   componentDidMount() {
@@ -43,13 +44,10 @@ class Room extends Component {
             console.log("Connection opened, ", connection);
             this.send([connection], {type: "log", message: `Hello from your host ${this.props.id}`});
             this.setState((state, props) => {
-                let connections = state.connections;
-                let participants = state.participants;
-                if (!(connection.peer in connections)) {
-                    connections[connection.peer] = connection;
-                    participants.push({id: connection.peer});    
-                }
-                return ({connections, participants});
+                return ({
+                    connections: {...state.connections, [connection.peer]: connection}, 
+                    participants: {...state.participants, [connection.peer]: {}}
+                });
             }, () => {
                 console.log("Sending participants: ", this.state.participants);
                 this.send(this.state.connections, {type: "participants", participants: this.state.participants});
@@ -75,14 +73,10 @@ class Room extends Component {
     connection.on('close', () => {
         if (this.state.isHost) {
             this.setState((state, props) => {
-                let connections = state.connections;
-                let participants = state.participants;
+                let connections = {...state.connections};
+                let participants = {...state.participants};
                 delete connections[connection.peer];
-                participants.forEach((participant, i) => {
-                    if (participant.id === connection.peer) {
-                        participants.splice(i, 1);
-                    }
-                });
+                delete participants[connection.peer];
                 return ({connections, participants});
             }, () => {
                 console.log("Sending participants: ", this.state.participants);
@@ -102,25 +96,62 @@ class Room extends Component {
   }
 
   receive(data) {
-      if (data.type && data.type === "log") {
-          console.log(data.message)
-      } else if (data.type && data.type === "participants") {
-          this.setState({participants: data.participants});
+    switch (data.type) {
+        case "log":
+            console.log(data.message)
+            break;
+        case "participants":
+            this.setState({participants: data.participants});
+            break;
+        case "chat":
+            this.setState({chat: data.chat});
+            break;
+        case "message":
+            console.log("message received", data.message);
+            this.setState((state, props) => ({chat : [...state.chat, data.message]}), () => {
+                console.log("sending chat", this.state.chat);
+                this.send(this.state.connections, {type: "chat", chat: this.state.chat});
+            });
+            break;
+        default:
+          console.log("Received ", data);
       }
   }
 
   componentWillUnmount() {
 
   }
+
+  sendChat(event) {
+      event.preventDefault();
+      let message = event.target.elements.message.value;
+      if (this.state.isHost) {
+        this.setState((state, props) => ({chat : [...state.chat, message]}), () => {
+            console.log("sending chat", this.state.chat);
+            this.send(this.state.connections, {type: "chat", chat: this.state.chat});
+        });
+      } else {
+          this.send(this.state.connections, {type: "message", message: message});
+      }
+      event.target.elements.message.value = "";
+  }
   
   render() {
-      const participantList = this.state.participants.map((participant) =>
-        (<li key={participant.id}>{participant.id}</li>)
+      const participantList = Object.keys(this.state.participants).map((key) =>
+        (<li key={key}>{key}</li>)
+      );
+      const chat = this.state.chat.map((message, i) => 
+        (<span key={i}>{message}</span>)
       );
       return (
         <div>
             <h1>Room</h1>
             <ul>{participantList}</ul>
+            <form onSubmit={this.sendChat} autoComplete="off">
+                <input type="text" id="message" name="message" placeholder="Enter Message" />
+                <input type="submit" value="Send" />
+            </form>
+            <div className="chat">{chat}</div>
         </div>
       );
   }
