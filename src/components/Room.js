@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
 import Participants from './Participants';
+import Chat from './Chat';
 import './Room.css';
 
 import medium from '../words/words';
@@ -12,7 +13,7 @@ class Room extends Component {
             isHost: this.props.id === this.props.match.params.id,
             connections: {},
             turn: {},
-            participants: this.props.id ? {[this.props.id]: {name: this.props.id}} : {},
+            participants: this.props.id ? {[this.props.id]: {name: this.props.id, score: 0}} : {},
             chat: []
         }
         this.words = medium;
@@ -51,7 +52,7 @@ class Room extends Component {
                 this.setState((state, props) => {
                     return ({
                         connections: {...state.connections, [connection.peer]: connection}, 
-                        participants: {...state.participants, [connection.peer]: {name: connection.peer}}
+                        participants: {...state.participants, [connection.peer]: {name: connection.peer, score: 0}}
                     });
                 }, () => {
                     // console.log("Sending participants: ", this.state.participants);
@@ -87,7 +88,9 @@ class Room extends Component {
         });
 
         // Receive messages
-        connection.on('data', this.receive);
+        connection.on('data', (data) => {
+            this.receive(data, connection.peer);
+        });
     }
 
     send(data, connections = this.state.connections) {
@@ -96,13 +99,13 @@ class Room extends Component {
         }
     }
 
-    receive(data) {
+    receive(data, sender) {
         switch (data.type) {
             case "log":
                 console.log(data.message)
                 break;
             case "chat":
-                this.addToChat(data.message);
+                this.addToChat(data.message, sender);
                 break;
             case "turn":
                 this.setState({turn: data.turn});
@@ -126,18 +129,23 @@ class Room extends Component {
         this.setState({turn});
     }
 
-    addToChat(message) {
+    addToChat(message, sender) {
         if (this.state.isHost) {
-            this.send({type: "chat", message});
+            if (message === this.state.turn.word) {
+                // They got the word!
+            }
+            this.send({type: "chat", message: {message, sender}});
+            this.setState((state, props) => ({chat : [...state.chat, {message, sender}]}));
+        } else {
+            this.setState((state, props) => ({chat : [...state.chat, message]}));
         }
-        this.setState((state, props) => ({chat : [...state.chat, message]}));
     }
 
     sendChatMessage(event) {
         event.preventDefault();
         let message = event.target.elements.message.value;
         if (this.state.isHost) {
-            this.addToChat(message);
+            this.addToChat(message, this.props.id);
         } else {
             this.send({type: "chat", message});
         }
@@ -145,12 +153,9 @@ class Room extends Component {
     }
   
     render() {
-        const chat = this.state.chat.map((message, i) => 
-            (<div key={i}>{message}</div>)
-        );
         return (
             <div className="container">
-                <div className="chat">{chat}</div>
+                <Chat chat={this.state.chat} />
                 <main>
                     <h1>Room</h1>
                     <Participants participants={this.state.participants} turn={this.state.turn} />
