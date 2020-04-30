@@ -33,6 +33,16 @@ main {
     grid-area: main;
 }
 
+.word {
+    background: #fff;
+    color: #111;
+    text-align: center;
+    padding: 10px 30px;
+    width: auto;
+    box-shadow: 1px 1px 5px rgba(17, 17, 17, .5);
+    font-size: 30px;
+}
+
 form {
     display: flex;
     grid-area: message;

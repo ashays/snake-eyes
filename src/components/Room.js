@@ -14,8 +14,10 @@ class Room extends Component {
             participants: this.props.id ? {[this.props.id] : {}} : {},
             chat: []
         }
+        this.words = medium;
         this.receive = this.receive.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
+        this.startGame = this.startGame.bind(this);
     }
 
     componentDidMount() {
@@ -101,12 +103,26 @@ class Room extends Component {
             case "chat":
                 this.addToChat(data.message);
                 break;
+            case "turn":
+                this.setState({turn: data.turn});
+                break;
             case "participants":
                 this.setState({participants: data.participants});
                 break;
             default:
                 console.log("Received ", data);
         }
+    }
+
+    startGame() {
+        let word = this.words[Math.floor(Math.random() * this.words.length)];
+        let turn = {
+            pId: Object.keys(this.state.participants)[0],
+            pIndex: 0,
+            word,
+        };
+        this.send({type: "turn", turn});
+        this.setState({turn});
     }
 
     addToChat(message) {
@@ -140,6 +156,12 @@ class Room extends Component {
                 <main>
                     <h1>Room</h1>
                     <ul>{participantList}</ul>
+                    {this.state.isHost && this.state.turn.pIndex === undefined &&
+                        <button type="button" onClick={this.startGame}>Start game!</button>
+                    }
+                    {this.state.turn.pId === this.props.id &&
+                        <div className="word">{this.state.turn.word}</div>
+                    }
                 </main>
                 <form onSubmit={this.sendChatMessage} autoComplete="off">
                     <input type="text" id="message" name="message" placeholder="Enter Message" />
