@@ -8,7 +8,7 @@ class Room extends Component {
     this.state = {
         isHost: this.props.id === this.props.match.params.id,
         connections: {},
-        turn: -1,
+        turn: this.props.match.params.id,
         participants: this.props.id ? {[this.props.id] : {}} : {},
         chat: []
     }
@@ -133,10 +133,12 @@ class Room extends Component {
         (<div key={i}>{message}</div>)
       );
       return (
-        <div>
-            <h1>Room</h1>
-            <ul>{participantList}</ul>
+        <div className="container">
             <div className="chat">{chat}</div>
+            <main>
+                <h1>Room</h1>
+                <ul>{participantList}</ul>
+            </main>
             <form onSubmit={this.sendChatMessage} autoComplete="off">
                 <input type="text" id="message" name="message" placeholder="Enter Message" />
                 <input type="submit" value="Send" />
