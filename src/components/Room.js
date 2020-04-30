@@ -19,7 +19,7 @@ class Room extends Component {
         this.words = medium;
         this.receive = this.receive.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
-        this.startGame = this.startGame.bind(this);
+        this.nextTurn = this.nextTurn.bind(this);
     }
 
     componentDidMount() {
@@ -118,11 +118,16 @@ class Room extends Component {
         }
     }
 
-    startGame() {
+    nextTurn() {
         let word = this.words[Math.floor(Math.random() * this.words.length)];
+        let participants = Object.keys(this.state.participants);
+        let pIndex = 0;
+        if (this.state.turn.pIndex !== undefined) {
+            pIndex = this.state.turn.pIndex + 1 < participants.length ? this.state.turn.pIndex + 1: 0;
+        }
         let turn = {
-            pId: Object.keys(this.state.participants)[0],
-            pIndex: 0,
+            pId: participants[pIndex],
+            pIndex,
             word,
         };
         this.send({type: "turn", turn});
@@ -131,8 +136,17 @@ class Room extends Component {
 
     addToChat(message, sender) {
         if (this.state.isHost) {
-            if (message === this.state.turn.word) {
+            if (message === this.state.turn.word && this.state.turn.pId !== sender) {
                 // They got the word!
+                // TODO send announcement
+                // Increment score
+                let participants = {...this.state.participants};
+                participants[this.state.turn.pId].score++;
+                participants[sender].score++;
+                this.setState({participants});
+                this.send({type: "participants", participants: participants});
+                // Start next turn
+                this.nextTurn();
             }
             this.send({type: "chat", message: {message, sender}});
             this.setState((state, props) => ({chat : [...state.chat, {message, sender}]}));
@@ -160,7 +174,7 @@ class Room extends Component {
                     <h1>Room</h1>
                     <Participants participants={this.state.participants} turn={this.state.turn} />
                     {this.state.isHost && this.state.turn.pIndex === undefined &&
-                        <button type="button" onClick={this.startGame}>Start game!</button>
+                        <button type="button" onClick={this.nextTurn}>Start game!</button>
                     }
                     {this.state.turn.pId === this.props.id &&
                         <div className="word">{this.state.turn.word}</div>
