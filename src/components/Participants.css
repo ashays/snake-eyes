@@ -1,0 +1,13 @@
+ul {
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+ul li {
+    background: #ff7c7c;
+    padding: 10px;
+    text-align: center;
+}

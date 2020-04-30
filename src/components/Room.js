@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
+import Participants from './Participants';
 import './Room.css';
 
 import medium from '../words/words';
@@ -11,7 +12,7 @@ class Room extends Component {
             isHost: this.props.id === this.props.match.params.id,
             connections: {},
             turn: {},
-            participants: this.props.id ? {[this.props.id] : {}} : {},
+            participants: this.props.id ? {[this.props.id]: {name: this.props.id}} : {},
             chat: []
         }
         this.words = medium;
@@ -50,7 +51,7 @@ class Room extends Component {
                 this.setState((state, props) => {
                     return ({
                         connections: {...state.connections, [connection.peer]: connection}, 
-                        participants: {...state.participants, [connection.peer]: {}}
+                        participants: {...state.participants, [connection.peer]: {name: connection.peer}}
                     });
                 }, () => {
                     // console.log("Sending participants: ", this.state.participants);
@@ -144,9 +145,6 @@ class Room extends Component {
     }
   
     render() {
-        const participantList = Object.keys(this.state.participants).map((key) =>
-            (<li key={key}>{key}</li>)
-        );
         const chat = this.state.chat.map((message, i) => 
             (<div key={i}>{message}</div>)
         );
@@ -155,7 +153,7 @@ class Room extends Component {
                 <div className="chat">{chat}</div>
                 <main>
                     <h1>Room</h1>
-                    <ul>{participantList}</ul>
+                    <Participants participants={this.state.participants} turn={this.state.turn} />
                     {this.state.isHost && this.state.turn.pIndex === undefined &&
                         <button type="button" onClick={this.startGame}>Start game!</button>
                     }
