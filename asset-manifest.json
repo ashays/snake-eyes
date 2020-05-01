@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/snake-eyes/static/css/main.d03bebb8.chunk.css",
-    "main.js": "/snake-eyes/static/js/main.75aa1604.chunk.js",
-    "main.js.map": "/snake-eyes/static/js/main.75aa1604.chunk.js.map",
+    "main.css": "/snake-eyes/static/css/main.5fb0bc47.chunk.css",
+    "main.js": "/snake-eyes/static/js/main.6d7e42ea.chunk.js",
+    "main.js.map": "/snake-eyes/static/js/main.6d7e42ea.chunk.js.map",
     "runtime-main.js": "/snake-eyes/static/js/runtime-main.e219c39d.js",
     "runtime-main.js.map": "/snake-eyes/static/js/runtime-main.e219c39d.js.map",
     "static/js/2.39170716.chunk.js": "/snake-eyes/static/js/2.39170716.chunk.js",
     "static/js/2.39170716.chunk.js.map": "/snake-eyes/static/js/2.39170716.chunk.js.map",
     "index.html": "/snake-eyes/index.html",
-    "precache-manifest.6a4c4e822cee732292ddb014bcbb21f7.js": "/snake-eyes/precache-manifest.6a4c4e822cee732292ddb014bcbb21f7.js",
+    "precache-manifest.743b052d8b324178078f59170ce81092.js": "/snake-eyes/precache-manifest.743b052d8b324178078f59170ce81092.js",
     "service-worker.js": "/snake-eyes/service-worker.js",
-    "static/css/main.d03bebb8.chunk.css.map": "/snake-eyes/static/css/main.d03bebb8.chunk.css.map",
+    "static/css/main.5fb0bc47.chunk.css.map": "/snake-eyes/static/css/main.5fb0bc47.chunk.css.map",
     "static/js/2.39170716.chunk.js.LICENSE.txt": "/snake-eyes/static/js/2.39170716.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.e219c39d.js",
     "static/js/2.39170716.chunk.js",
-    "static/css/main.d03bebb8.chunk.css",
-    "static/js/main.75aa1604.chunk.js"
+    "static/css/main.5fb0bc47.chunk.css",
+    "static/js/main.6d7e42ea.chunk.js"
   ]
 }
