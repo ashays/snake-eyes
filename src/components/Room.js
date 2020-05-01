@@ -142,7 +142,7 @@ class Room extends Component {
 
     addToChat(message, sender) {
         if (this.state.isHost) {
-            if (message === this.state.turn.word && this.state.turn.pId !== sender) {
+            if (message.toLowerCase() === this.state.turn.word.toLowerCase() && this.state.turn.pId !== sender) {
                 // They got the word!
                 // TODO send announcement
                 // Increment score
