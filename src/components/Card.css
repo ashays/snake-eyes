@@ -1,0 +1,31 @@
+.card {
+    background: #fff;
+    color: #111;
+    text-align: center;
+    width: auto;
+    box-shadow: 1px 1px 5px rgba(17, 17, 17, .5);
+    font-size: 30px;
+    margin-bottom: 30px;
+    padding: 10px;
+    min-height: 130px;
+}
+
+.card .word {
+    margin: 15px 0;
+}
+
+.card .instructions {
+    font-size: 12px;
+}
+
+.card.flipped {
+    background: #111;
+    color: #fff;
+    opacity: .75;
+}
+
+.card.flipped .profile {
+    width: 40px;
+    height: 40px;
+    margin: 15px auto;
+}

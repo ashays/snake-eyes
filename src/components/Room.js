@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
 import Participants from './Participants';
+import Card from './Card';
 import Timer from './Timer';
 import Chat from './Chat';
 import './Room.css';
@@ -181,9 +182,7 @@ class Room extends Component {
                 <Chat chat={this.state.chat} />
                 <main>
                     <h1>Room</h1>
-                    {this.state.turn.pId === this.props.id &&
-                        <div className="word">{this.state.turn.word}</div>
-                    }
+                    <Card player={this.props.id} turn={this.state.turn} />
                     <Participants participants={this.state.participants} turn={this.state.turn} />
                     {this.state.isHost && this.state.turn.pIndex === undefined &&
                         <button type="button" onClick={this.nextTurn}>Start game!</button>
