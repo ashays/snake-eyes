@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
 import Participants from './Participants';
+import Timer from './Timer';
 import Chat from './Chat';
 import './Room.css';
 
@@ -128,9 +129,14 @@ class Room extends Component {
             pId: participants[pIndex],
             pIndex,
             word,
+            start: new Date().getTime()
         };
         this.send({type: "turn", turn});
         this.setState({turn});
+    }
+
+    endRound() {
+
     }
 
     addToChat(message, sender) {
@@ -140,8 +146,9 @@ class Room extends Component {
                 // TODO send announcement
                 // Increment score
                 let participants = {...this.state.participants};
-                participants[this.state.turn.pId].score++;
-                participants[sender].score++;
+                let points = 10 - Math.floor((new Date().getTime() - this.state.turn.start) / 1000); 
+                participants[this.state.turn.pId].score += points > 0 ? points : 1;
+                participants[sender].score += points > 0 ? points : 1;
                 this.setState({participants});
                 this.send({type: "participants", participants: participants});
                 // Start next turn
@@ -181,6 +188,7 @@ class Room extends Component {
                     {this.state.isHost && this.state.turn.pIndex === undefined &&
                         <button type="button" onClick={this.nextTurn}>Start game!</button>
                     }
+                    {/* <Timer start={this.state.turn.start} /> */}
                 </main>
                 <form onSubmit={this.sendChatMessage} autoComplete="off">
                     <input type="text" id="message" name="message" placeholder="Enter Message" />
