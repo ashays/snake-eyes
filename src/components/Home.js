@@ -6,7 +6,9 @@ class Home extends Component {
     return (
         <div>
             <h2>Home</h2>
-            <Link to={"room/" + this.props.id}>Create Room</Link>
+            {this.props.id &&
+              <Link to={"room/" + this.props.id}>Create Room</Link>
+            }            
         </div>
     );
   }

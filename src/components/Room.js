@@ -51,16 +51,13 @@ class Room extends Component {
         // When connection established
         connection.on('open', () => {
             if (this.state.isHost) {
-                // console.log("Connection opened, ", connection);
-                // this.send({type: "log", message: `Hello from your host ${this.props.id}`}, [connection]);
                 this.setState((state, props) => {
                     return ({
                         connections: {...state.connections, [connection.peer]: connection}, 
                         participants: {...state.participants, [connection.peer]: {name: connection.peer, score: 0}}
                     });
                 }, () => {
-                    // console.log("Sending participants: ", this.state.participants);
-                    this.send({type: "participants", participants: this.state.participants});
+                    this.send({type: "sync", prop: "participants", data: this.state.participants});
                 });
             } else {
                 this.setState((state, props) => ({connections: {...state.connections, [connection.peer]: connection}}));
@@ -86,7 +83,7 @@ class Room extends Component {
                     return ({connections, participants});
                 }, () => {
                     // console.log("Sending participants: ", this.state.participants);
-                    this.send({type: "participants", participants: this.state.participants});
+                    this.send({type: "sync", prop: "participants", data: this.state.participants});
                 });
             }
         });
@@ -114,15 +111,6 @@ class Room extends Component {
             case "sync":
                 this.setState({[data.prop]: data.data});
                 break;
-            case "round":
-                this.setState({round: data.round});
-                break;
-            case "turn":
-                this.setState({turn: data.turn});
-                break;
-            case "participants":
-                this.setState({participants: data.participants});
-                break;
             default:
                 console.log("Received ", data);
         }
@@ -141,7 +129,7 @@ class Room extends Component {
             word,
             start: new Date().getTime()
         };
-        this.send({type: "turn", turn});
+        this.send({type: "sync", prop: "turn", data: turn});
         this.setState({turn});
     }
 
@@ -152,7 +140,7 @@ class Room extends Component {
         };
         setTimeout(this.endRound, 60000);
         this.nextTurn();
-        this.send({type: "round", round});
+        this.send({type: "sync", prop: "round", data: round});
         this.setState({round});
     }
 
@@ -160,7 +148,7 @@ class Room extends Component {
         let round = {
             playing: false
         };
-        this.send({type: "round", round});
+        this.send({type: "sync", prop: "round", data: round});
         this.setState({round});
     }
 
@@ -175,7 +163,7 @@ class Room extends Component {
                 participants[this.state.turn.pId].score += points > 0 ? points : 1;
                 participants[sender].score += points > 0 ? points : 1;
                 this.setState({participants});
-                this.send({type: "participants", participants: participants});
+                this.send({type: "sync", prop: "participants", data: participants});
                 // Start next turn
                 this.nextTurn();
             }
