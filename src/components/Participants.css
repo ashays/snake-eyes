@@ -1,13 +1,31 @@
-ul {
-    padding: 0;
-    list-style: none;
+.participants {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
 }
 
-ul li {
-    background: #ff7c7c;
-    padding: 10px;
+.participant {
     text-align: center;
+}
+
+.active .profile {
+    background: #ffd082;
+}
+
+.profile {
+    background: #ff7c7c;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile img {
+    width: 100%;
+}
+
+.name {
+    font-size: 10px;
+    margin-top: 5px;
 }

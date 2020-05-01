@@ -4,7 +4,7 @@ import Participants from './Participants';
 import Chat from './Chat';
 import './Room.css';
 
-import medium from '../words/words';
+import randomWord from '../data/words';
 
 class Room extends Component {
     constructor(props) {
@@ -16,7 +16,6 @@ class Room extends Component {
             participants: this.props.id ? {[this.props.id]: {name: this.props.id, score: 0}} : {},
             chat: []
         }
-        this.words = medium;
         this.receive = this.receive.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
         this.nextTurn = this.nextTurn.bind(this);
@@ -119,7 +118,7 @@ class Room extends Component {
     }
 
     nextTurn() {
-        let word = this.words[Math.floor(Math.random() * this.words.length)];
+        let word = randomWord();
         let participants = Object.keys(this.state.participants);
         let pIndex = 0;
         if (this.state.turn.pIndex !== undefined) {
@@ -175,12 +174,12 @@ class Room extends Component {
                 <Chat chat={this.state.chat} />
                 <main>
                     <h1>Room</h1>
+                    {this.state.turn.pId === this.props.id &&
+                        <div className="word">{this.state.turn.word}</div>
+                    }
                     <Participants participants={this.state.participants} turn={this.state.turn} />
                     {this.state.isHost && this.state.turn.pIndex === undefined &&
                         <button type="button" onClick={this.nextTurn}>Start game!</button>
-                    }
-                    {this.state.turn.pId === this.props.id &&
-                        <div className="word">{this.state.turn.word}</div>
                     }
                 </main>
                 <form onSubmit={this.sendChatMessage} autoComplete="off">

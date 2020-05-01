@@ -3,15 +3,14 @@ import './Participants.css';
 
 function Participants(props) {
     const participantList = Object.entries(props.participants).map((entry) => (
-        <li key={entry[0]}>
-            {props.turn.pId === entry[0] && "👑"}
-            {entry[1].name}
-            {entry[1].score}
-        </li>
+        <div key={entry[0]} className={props.turn.pId === entry[0] ? "active participant" : "participant"}>
+            <div className="profile"><img src={"https://api.adorable.io/avatars/75/" + entry[0]} alt={entry[1].name + "'s Avatar"} /></div>
+            <div className="name">{entry[1].name} ({entry[1].score})</div>
+        </div>
     ));
 
     return (
-        <ul>{participantList}</ul>
+        <div className="participants">{participantList}</div>
     );
 }
 
