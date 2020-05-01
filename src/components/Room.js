@@ -167,6 +167,9 @@ class Room extends Component {
     }
   
     render() {
+        if (!this.state.isHost && !this.state.connections[this.props.match.params.id]) {
+            return (<div className="loader"></div>);
+        }
         return (
             <div className="container">
                 <Chat chat={this.state.chat} />
