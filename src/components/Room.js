@@ -14,10 +14,13 @@ class Room extends Component {
         this.state = {
             isHost: this.props.id === this.props.match.params.id,
             connections: {},
+            round: {},
             turn: {},
             participants: this.props.id ? {[this.props.id]: {name: this.props.id, score: 0}} : {},
             chat: []
-        }
+        };
+        this.startRound = this.startRound.bind(this);
+        this.endRound = this.endRound.bind(this);
         this.receive = this.receive.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
         this.nextTurn = this.nextTurn.bind(this);
@@ -108,6 +111,12 @@ class Room extends Component {
             case "chat":
                 this.addToChat(data.message, sender);
                 break;
+            case "sync":
+                this.setState({[data.prop]: data.data});
+                break;
+            case "round":
+                this.setState({round: data.round});
+                break;
             case "turn":
                 this.setState({turn: data.turn});
                 break;
@@ -136,8 +145,23 @@ class Room extends Component {
         this.setState({turn});
     }
 
-    endRound() {
+    startRound() {
+        let round = {
+            playing: true,
+            start: new Date().getTime()
+        };
+        setTimeout(this.endRound, 60000);
+        this.nextTurn();
+        this.send({type: "round", round});
+        this.setState({round});
+    }
 
+    endRound() {
+        let round = {
+            playing: false
+        };
+        this.send({type: "round", round});
+        this.setState({round});
     }
 
     addToChat(message, sender) {
@@ -181,13 +205,12 @@ class Room extends Component {
             <div className="container">
                 <Chat chat={this.state.chat} />
                 <main>
-                    <h1>Room</h1>
-                    <Card player={this.props.id} turn={this.state.turn} />
+                    <Timer start={this.state.round.start} duration={60} />
+                    <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
                     <Participants participants={this.state.participants} turn={this.state.turn} />
-                    {this.state.isHost && this.state.turn.pIndex === undefined &&
-                        <button type="button" onClick={this.nextTurn}>Start game!</button>
+                    {this.state.isHost && !this.state.round.playing &&
+                        <button type="button" onClick={this.startRound}>Start game!</button>
                     }
-                    {/* <Timer start={this.state.turn.start} /> */}
                 </main>
                 <form onSubmit={this.sendChatMessage} autoComplete="off">
                     <input type="text" id="message" name="message" placeholder="Enter Message" />

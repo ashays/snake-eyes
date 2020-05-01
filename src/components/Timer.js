@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Timer.css';
 
 class Timer extends Component {
     constructor(props) {
@@ -8,12 +9,8 @@ class Timer extends Component {
         }
     }
 
-    getRemainingTime(start) {
-        if (start) {
-            return Math.floor((start + 60000 - new Date().getTime()) / 1000);
-        } else {
-            return false;
-        }
+    getRemainingTime() {
+        return Math.floor((this.props.start + (this.props.duration * 1000) - new Date().getTime()) / 1000);
     }
 
     componentDidMount() {
@@ -29,7 +26,7 @@ class Timer extends Component {
             this.setState({remaining: this.getRemainingTime(this.props.start)});
             this.interval = setInterval(() => {
                 this.setState({remaining: this.getRemainingTime(this.props.start)});
-            }, 1000);    
+            }, 1000);
         }
     }
 
@@ -38,9 +35,12 @@ class Timer extends Component {
     }
     
     render() {
-        return (
-            <div className="timer">{this.state.remaining}</div>
-        );
+        if (this.state.remaining) {
+            return (
+                <div className={this.state.remaining <= 10 ? "timer scary" : "timer"}>{this.state.remaining}</div>
+            );    
+        }
+        return (<div></div>);
     }
 }
 
