@@ -7,6 +7,8 @@ import Chat from './Chat';
 import './Room.css';
 
 import randomWord from '../data/words';
+import cheer from '../assets/sounds/cheer.mp3';
+import ting from '../assets/sounds/ting.mp3';
 
 class Room extends Component {
     constructor(props) {
@@ -111,9 +113,18 @@ class Room extends Component {
             case "sync":
                 this.setState({[data.prop]: data.data});
                 break;
+            case "sound":
+                let tingAudio = new Audio(ting);
+                tingAudio.play();
+                break;
             default:
                 console.log("Received ", data);
         }
+    }
+
+    sendAndReceive(data, connections = this.state.connections) {
+        this.send(data, connections);
+        this.receive(data, this.props.id);
     }
 
     nextTurn() {
@@ -160,16 +171,16 @@ class Room extends Component {
 
     addToChat(message, sender) {
         if (this.state.isHost) {
-            if (message && message.toLowerCase() === this.state.turn.word.toLowerCase() && this.state.turn.pId !== sender) {
+            if (this.state.round.playing && message && message.toLowerCase() === this.state.turn.word.toLowerCase() && this.state.turn.pId !== sender) {
                 // They got the word!
+                this.sendAndReceive({type: "sound", name: "ting"});
                 // TODO send announcement
                 // Increment score
                 let participants = {...this.state.participants};
                 let points = 10 - Math.floor((new Date().getTime() - this.state.turn.start) / 1000); 
                 participants[this.state.turn.pId].score += points > 0 ? points : 1;
                 participants[sender].score += points > 0 ? points : 1;
-                this.setState({participants});
-                this.send({type: "sync", prop: "participants", data: participants});
+                this.sendAndReceive({type: "sync", prop: "participants", data: participants});
                 // Start next turn
                 this.nextTurn();
             }
@@ -188,7 +199,11 @@ class Room extends Component {
                 this.addToChat(message, this.props.id);
             } else {
                 this.send({type: "chat", message});
-            }    
+            }
+            if (this.state.round.playing && message && message.toLowerCase() === this.state.turn.word.toLowerCase() && this.state.turn.pId !== this.props.id) {
+                let cheerAudio = new Audio(cheer);
+                cheerAudio.play();
+            }
         }
         event.target.elements.message.value = "";
     }
@@ -201,7 +216,7 @@ class Room extends Component {
             <div className="container">
                 <Chat chat={this.state.chat} />
                 <main>
-                    <Timer start={this.state.round.start} duration={60} />
+                    <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
                     <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
                     <Participants participants={this.state.participants} turn={this.state.turn} />
                     {this.state.isHost && !this.state.round.playing &&
@@ -209,7 +224,7 @@ class Room extends Component {
                     }
                 </main>
                 <form onSubmit={this.sendChatMessage} autoComplete="off">
-                    <input type="text" id="message" name="message" placeholder="Enter Message" />
+                    <input type="text" id="message" name="message" placeholder={this.state.round.playing ? "Enter Guess" : "Enter Message"} />
                     <input type="submit" value="Send" />
                 </form>
             </div>

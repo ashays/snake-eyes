@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './Timer.css';
 
 import blop from '../assets/sounds/blop.mp3';
+import gong from '../assets/sounds/gong.mp3';
+import aww from '../assets/sounds/aww.mp3';
 
 class Timer extends Component {
     constructor(props) {
@@ -38,10 +40,17 @@ class Timer extends Component {
             this.blop.play();
         } else if (remaining <= 40 && remaining > this.SCARY) {
             this.blop.play();
-        } else if (remaining <= this.SCARY) {
+        } else if (remaining <= this.SCARY && remaining > 0) {
             this.blop.play();
             setTimeout(() => { this.blop.play(); }, 500);
-        } else if (remaining < 0) {
+        } else if (remaining === 0) {
+            if (this.props.isPlayersTurn) {
+                let awwAudio = new Audio(aww);
+                awwAudio.play();
+            }
+            let gongAudio = new Audio(gong);
+            gongAudio.play();
+        } else if (remaining <= 0) {
             clearInterval(this.timerInterval);
         }
     }
