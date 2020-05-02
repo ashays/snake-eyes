@@ -150,11 +150,17 @@ class Room extends Component {
         };
         this.send({type: "sync", prop: "round", data: round});
         this.setState({round});
+        // If it ends on your turn, you lose 5 points
+        let participants = {...this.state.participants};
+        let currentScore = participants[this.state.turn.pId].score;
+        participants[this.state.turn.pId].score -= currentScore > 5 ? 5 : currentScore;
+        this.setState({participants});
+        this.send({type: "sync", prop: "participants", data: participants});
     }
 
     addToChat(message, sender) {
         if (this.state.isHost) {
-            if (message.toLowerCase() === this.state.turn.word.toLowerCase() && this.state.turn.pId !== sender) {
+            if (message && message.toLowerCase() === this.state.turn.word.toLowerCase() && this.state.turn.pId !== sender) {
                 // They got the word!
                 // TODO send announcement
                 // Increment score
