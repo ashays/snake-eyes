@@ -182,11 +182,13 @@ class Room extends Component {
 
     sendChatMessage(event) {
         event.preventDefault();
-        let message = event.target.elements.message.value;
-        if (this.state.isHost) {
-            this.addToChat(message, this.props.id);
-        } else {
-            this.send({type: "chat", message});
+        let message = event.target.elements.message.value.trim();
+        if (message) {
+            if (this.state.isHost) {
+                this.addToChat(message, this.props.id);
+            } else {
+                this.send({type: "chat", message});
+            }    
         }
         event.target.elements.message.value = "";
     }

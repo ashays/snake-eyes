@@ -10,7 +10,7 @@ class Timer extends Component {
             remaining: this.getRemainingTime(props.start)
         }
         this.timer = this.timer.bind(this);
-        this.SCARY = 20;
+        this.SCARY = 15;
     }
 
     getRemainingTime() {
