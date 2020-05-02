@@ -1,22 +1,27 @@
 {
   "files": {
-    "main.css": "/snake-eyes/static/css/main.5fb0bc47.chunk.css",
-    "main.js": "/snake-eyes/static/js/main.6d7e42ea.chunk.js",
-    "main.js.map": "/snake-eyes/static/js/main.6d7e42ea.chunk.js.map",
+    "main.css": "/snake-eyes/static/css/main.e1466730.chunk.css",
+    "main.js": "/snake-eyes/static/js/main.ee74bfc7.chunk.js",
+    "main.js.map": "/snake-eyes/static/js/main.ee74bfc7.chunk.js.map",
     "runtime-main.js": "/snake-eyes/static/js/runtime-main.e219c39d.js",
     "runtime-main.js.map": "/snake-eyes/static/js/runtime-main.e219c39d.js.map",
-    "static/js/2.39170716.chunk.js": "/snake-eyes/static/js/2.39170716.chunk.js",
-    "static/js/2.39170716.chunk.js.map": "/snake-eyes/static/js/2.39170716.chunk.js.map",
+    "static/js/2.323109ea.chunk.js": "/snake-eyes/static/js/2.323109ea.chunk.js",
+    "static/js/2.323109ea.chunk.js.map": "/snake-eyes/static/js/2.323109ea.chunk.js.map",
     "index.html": "/snake-eyes/index.html",
-    "precache-manifest.743b052d8b324178078f59170ce81092.js": "/snake-eyes/precache-manifest.743b052d8b324178078f59170ce81092.js",
+    "precache-manifest.5873c3cd47d8a3bc14109d19b0aa55cb.js": "/snake-eyes/precache-manifest.5873c3cd47d8a3bc14109d19b0aa55cb.js",
     "service-worker.js": "/snake-eyes/service-worker.js",
-    "static/css/main.5fb0bc47.chunk.css.map": "/snake-eyes/static/css/main.5fb0bc47.chunk.css.map",
-    "static/js/2.39170716.chunk.js.LICENSE.txt": "/snake-eyes/static/js/2.39170716.chunk.js.LICENSE.txt"
+    "static/css/main.e1466730.chunk.css.map": "/snake-eyes/static/css/main.e1466730.chunk.css.map",
+    "static/js/2.323109ea.chunk.js.LICENSE.txt": "/snake-eyes/static/js/2.323109ea.chunk.js.LICENSE.txt",
+    "static/media/aww.mp3": "/snake-eyes/static/media/aww.2c3d60cd.mp3",
+    "static/media/blop.mp3": "/snake-eyes/static/media/blop.627c0e8b.mp3",
+    "static/media/cheer.mp3": "/snake-eyes/static/media/cheer.c597f127.mp3",
+    "static/media/gong.mp3": "/snake-eyes/static/media/gong.dd145efd.mp3",
+    "static/media/ting.mp3": "/snake-eyes/static/media/ting.b0da548d.mp3"
   },
   "entrypoints": [
     "static/js/runtime-main.e219c39d.js",
-    "static/js/2.39170716.chunk.js",
-    "static/css/main.5fb0bc47.chunk.css",
-    "static/js/main.6d7e42ea.chunk.js"
+    "static/js/2.323109ea.chunk.js",
+    "static/css/main.e1466730.chunk.css",
+    "static/js/main.ee74bfc7.chunk.js"
   ]
 }
