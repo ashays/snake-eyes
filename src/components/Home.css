@@ -1,0 +1,25 @@
+.game {
+    width: 280px;
+    height: 280px;
+    background: #ffd082;
+    color: #111;
+    box-sizing: border-box;
+    padding: 30px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -140px 0 0 -140px;
+}
+
+.game h2 {
+    font-style: italic;
+}
+
+.game a {
+    color: #ff7c7c;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 20px;
+    display: block;
+    text-align: right;
+}

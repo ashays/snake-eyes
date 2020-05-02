@@ -1,6 +1,5 @@
 .chat {
     grid-area: chat;
-    height: 500px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

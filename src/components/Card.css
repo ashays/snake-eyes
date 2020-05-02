@@ -10,8 +10,15 @@
     min-height: 130px;
 }
 
+.card img {
+    margin: 10px 0;
+    border-radius: 10px;
+}
+
 .card .word {
     margin: 15px 0;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .card .instructions {

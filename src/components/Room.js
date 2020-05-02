@@ -224,11 +224,15 @@ class Room extends React.Component {
             <div className="container">
                 <Chat chat={this.state.chat} participants={this.state.participants} />
                 <main>
+                    <h1>Hot Potato</h1>
+                    {Object.keys(this.state.participants).length < 2 &&
+                        <p>Invite friends to play using the URL</p>
+                    }
                     <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
                     <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
                     <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
-                    {this.state.isHost && !this.state.round.playing &&
-                        <button type="button" onClick={this.startRound}>Start game!</button>
+                    {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
+                        <button type="button" onClick={this.startRound}>Start</button>
                     }
                 </main>
                 <form onSubmit={this.sendChatMessage} autoComplete="off" className="chatbar">
