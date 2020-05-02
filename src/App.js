@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   HashRouter as Router,
   Switch,
@@ -10,12 +10,14 @@ import './App.css';
 
 import Peer from 'peerjs';
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: undefined
+      id: undefined,
+      name: undefined
     };
+    this.updateName = this.updateName.bind(this);
   }
 
   componentDidMount() {
@@ -27,15 +29,19 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    
+    this.state.peer.disconnect();
   };
+
+  updateName(name) {
+    this.setState({ name });
+  }
 
   render() {
     return (
       <Router>
         <Switch>
           <Route path="/room/:id">
-            <Room id={this.state.id} peer={this.state.peer} />
+            <Room id={this.state.id} peer={this.state.peer} player={this.state.name} updateName={this.updateName} />
           </Route>
           <Route path="/">
             <Home id={this.state.id} />

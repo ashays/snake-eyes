@@ -6,7 +6,7 @@ function Chat(props) {
     const chat = props.chat.map((message, i) => {
         let senderText;
         if (message.sender !== prevSender) {
-            senderText = (<div className="sender">{message.sender}</div>);
+            senderText = (<div className="sender">{props.participants[message.sender].name}</div>);
             prevSender = message.sender;
         }
         return (

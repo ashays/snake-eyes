@@ -8,11 +8,11 @@
     text-align: center;
 }
 
-.active .profile {
+.active .propic {
     background: #ffd082;
 }
 
-.profile {
+.propic {
     background: #ff7c7c;
     width: 60px;
     height: 60px;
@@ -21,7 +21,7 @@
     overflow: hidden;
 }
 
-.profile img {
+.propic img {
     width: 100%;
 }
 
