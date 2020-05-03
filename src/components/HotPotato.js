@@ -1,11 +1,12 @@
 import React from 'react';
+import { Switch, Route, Redirect } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import Participants from './Participants';
 import Profile from './Profile';
 import Card from './Card';
 import Timer from './Timer';
 import Chat from './Chat';
-import './Room.css';
+import './HotPotato.css';
 
 import randomWord from '../data/words';
 import cheer from '../assets/sounds/cheer.mp3';
@@ -116,6 +117,9 @@ class Room extends React.Component {
                 let tingAudio = new Audio(ting);
                 tingAudio.play();
                 break;
+            case "redirect":
+                this.props.history.push(data.location);
+                break;
             case "name":
                 let participants = {...this.state.participants};
                 participants[sender].name = data.name;
@@ -155,22 +159,21 @@ class Room extends React.Component {
         };
         setTimeout(this.endRound, 60000);
         this.nextTurn();
-        this.send({type: "sync", prop: "round", data: round});
-        this.setState({round});
+        this.sendAndReceive({type: "sync", prop: "round", data: round});
+        this.sendAndReceive({type: "redirect", location: `/hotpotato/${this.props.match.params.id}/play`});
     }
 
     endRound() {
         let round = {
             playing: false
         };
-        this.send({type: "sync", prop: "round", data: round});
-        this.setState({round});
+        this.sendAndReceive({type: "sync", prop: "round", data: round});
         // If it ends on your turn, you lose 5 points
         let participants = {...this.state.participants};
         let currentScore = participants[this.state.turn.pId].score;
         participants[this.state.turn.pId].score -= currentScore > 5 ? 5 : currentScore;
-        this.setState({participants});
-        this.send({type: "sync", prop: "participants", data: participants});
+        this.sendAndReceive({type: "sync", prop: "participants", data: participants});
+        this.sendAndReceive({type: "redirect", location: `/hotpotato/${this.props.match.params.id}/scores`});
     }
 
     addToChat(message, sender) {
@@ -221,25 +224,47 @@ class Room extends React.Component {
             return (<div className="loader"></div>);
         }
         return (
-            <div className="container">
-                <Chat chat={this.state.chat} participants={this.state.participants} />
-                <main>
-                    <h1>Hot Potato</h1>
-                    {Object.keys(this.state.participants).length < 2 &&
-                        <p>Invite friends to play using the URL</p>
-                    }
-                    <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
-                    <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
+            <Switch>
+                <Redirect exact from='/hotpotato/:id' to="/hotpotato/:id/lobby" />
+                <Route path="/hotpotato/:id/lobby">
+                    <div>
+                        <h1>Hot Potato</h1>
+                        <p>60 seconds on the clock. Take turns describing words to the other players. Correctly guess as many as you can, as quickly as you can—but don't let the timer end on your turn or you might lose it all.</p>
+                        <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
+                        {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
+                            <button type="button" onClick={this.startRound}>Start</button>
+                        }
+                    </div>
+                </Route>
+                <Route path="/hotpotato/:id/play">
+                    <div className="container">
+                        <Chat chat={this.state.chat} participants={this.state.participants} />
+                        <main>
+                            <h1>Hot Potato</h1>
+                            {Object.keys(this.state.participants).length < 2 &&
+                                <p>Invite friends to play using the URL</p>
+                            }
+                            <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
+                            <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
+                            <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
+                            {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
+                                <button type="button" onClick={this.startRound}>Start</button>
+                            }
+                        </main>
+                        <form onSubmit={this.sendChatMessage} autoComplete="off" className="chatbar">
+                            <input type="text" id="message" name="message" placeholder={this.state.round.playing ? "Enter Guess" : "Enter Message"} />
+                            <input type="submit" value="Send" />
+                        </form>
+                    </div>
+                </Route>
+                <Route path="/hotpotato/:id/scores">
+                    <h1>Scores</h1>
                     <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
                     {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
                         <button type="button" onClick={this.startRound}>Start</button>
                     }
-                </main>
-                <form onSubmit={this.sendChatMessage} autoComplete="off" className="chatbar">
-                    <input type="text" id="message" name="message" placeholder={this.state.round.playing ? "Enter Guess" : "Enter Message"} />
-                    <input type="submit" value="Send" />
-                </form>
-            </div>
+                </Route>
+            </Switch>
         );
     }
 }

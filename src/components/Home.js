@@ -10,7 +10,7 @@ class Home extends React.Component {
               <div className="game">
                 <h2>Hot Potato</h2>
                 <p>Describe and guess words as quickly as possible for more points... but don't let the buzzer end on you 🙀</p>
-                <Link to={"room/" + this.props.id}>Play</Link>
+                <Link to={"hotpotato/" + this.props.id}>Play</Link>
               </div>
             }            
         </div>

@@ -5,7 +5,7 @@ import {
   Route
 } from "react-router-dom";
 import Home from './components/Home';
-import Room from './components/Room';
+import HotPotato from './components/HotPotato';
 import './App.css';
 
 import Peer from 'peerjs';
@@ -40,8 +40,8 @@ class App extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/room/:id">
-            <Room id={this.state.id} peer={this.state.peer} player={this.state.name} updateName={this.updateName} />
+          <Route path="/hotpotato/:id">
+            <HotPotato id={this.state.id} peer={this.state.peer} player={this.state.name} updateName={this.updateName} />
           </Route>
           <Route path="/">
             <Home id={this.state.id} />
