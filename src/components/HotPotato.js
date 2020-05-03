@@ -16,11 +16,11 @@ class Room extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isHost: this.props.id === this.props.match.params.id,
+            isHost: props.id === props.match.params.id,
             connections: {},
             round: {},
             turn: {},
-            participants: this.props.id ? {[this.props.id]: {name: this.props.player, score: 0}} : {},
+            participants: props.id ? {[props.id]: {name: props.player, score: 0}} : {},
             chat: []
         };
         this.startRound = this.startRound.bind(this);
@@ -35,17 +35,24 @@ class Room extends React.Component {
             this.props.peer.on('connection', (conn) => {
                 this.setupConnection(conn);
             });
+        } else if (this.props.id) {
+            let conn = this.props.peer.connect(this.props.match.params.id);
+            this.setupConnection(conn);
         }
     }
 
     componentDidUpdate(prevProps) {
-        // If name or ID has changed (and both exist and is host), setup a connection with the host
-        if (this.props.id !== prevProps.id || this.props.player !== prevProps.player) {
-            if (!this.state.isHost && this.props.id && this.props.player) {
-                let conn = this.props.peer.connect(this.props.match.params.id);
-                this.setupConnection(conn);
-            } else if (this.state.isHost && this.props.player) {
+        // ID is changed (from undefined to an actual ID)
+        if (!this.state.isHost && this.props.id !== prevProps.id) {
+            let conn = this.props.peer.connect(this.props.match.params.id);
+            this.setupConnection(conn);
+        }
+        // If name changes ()
+        if (this.props.player && this.props.player !== prevProps.player) {
+            if (this.state.isHost) {
                 this.receive({type: "name", name: this.props.player}, this.props.id);
+            } else {
+                this.send({type: "name", name: this.props.player});
             }
         }
     }
@@ -56,13 +63,12 @@ class Room extends React.Component {
             if (this.state.isHost) {
                 this.setState((state, props) => ({
                         connections: {...state.connections, [connection.peer]: connection}, 
-                        participants: {...state.participants, [connection.peer]: {name: connection.peer, score: 0}}
+                        participants: {...state.participants, [connection.peer]: {name: "Anonymous Player", score: 0}}
                 }), () => {
                     this.send({type: "sync", prop: "participants", data: this.state.participants});
                 });
             } else {
                 this.setState((state, props) => ({connections: {...state.connections, [connection.peer]: connection}}));
-                this.send({type: "name", name: this.props.player});
             }
         });
 
@@ -214,13 +220,9 @@ class Room extends React.Component {
         }
         event.target.elements.message.value = "";
     }
-  
+
     render() {
-        if (!this.props.player) {
-            return (
-                <Profile id={this.props.id} updateName={this.props.updateName} />
-            );
-        } else if (!this.state.isHost && !this.state.connections[this.props.match.params.id]) {
+        if (!this.state.isHost && !this.state.connections[this.props.match.params.id]) {
             return (<div className="loader"></div>);
         }
         return (
@@ -234,6 +236,7 @@ class Room extends React.Component {
                         {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
                             <button type="button" onClick={this.startRound}>Start</button>
                         }
+                        {!this.props.player && <Profile id={this.props.id} updateName={this.props.updateName} /> }
                     </div>
                 </Route>
                 <Route path="/hotpotato/:id/play">
@@ -247,9 +250,6 @@ class Room extends React.Component {
                             <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
                             <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
                             <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
-                            {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
-                                <button type="button" onClick={this.startRound}>Start</button>
-                            }
                         </main>
                         <form onSubmit={this.sendChatMessage} autoComplete="off" className="chatbar">
                             <input type="text" id="message" name="message" placeholder={this.state.round.playing ? "Enter Guess" : "Enter Message"} />
