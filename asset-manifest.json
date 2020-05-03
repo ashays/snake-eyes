@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/snake-eyes/static/css/main.09b8c97e.chunk.css",
-    "main.js": "/snake-eyes/static/js/main.5996c684.chunk.js",
-    "main.js.map": "/snake-eyes/static/js/main.5996c684.chunk.js.map",
+    "main.js": "/snake-eyes/static/js/main.04cb2190.chunk.js",
+    "main.js.map": "/snake-eyes/static/js/main.04cb2190.chunk.js.map",
     "runtime-main.js": "/snake-eyes/static/js/runtime-main.e219c39d.js",
     "runtime-main.js.map": "/snake-eyes/static/js/runtime-main.e219c39d.js.map",
     "static/js/2.174c2d5f.chunk.js": "/snake-eyes/static/js/2.174c2d5f.chunk.js",
     "static/js/2.174c2d5f.chunk.js.map": "/snake-eyes/static/js/2.174c2d5f.chunk.js.map",
     "index.html": "/snake-eyes/index.html",
-    "precache-manifest.2f970e79e5d30590092d45da2d4ebea1.js": "/snake-eyes/precache-manifest.2f970e79e5d30590092d45da2d4ebea1.js",
+    "precache-manifest.921d285dbbcc73dcd0be43d15982c8ff.js": "/snake-eyes/precache-manifest.921d285dbbcc73dcd0be43d15982c8ff.js",
     "service-worker.js": "/snake-eyes/service-worker.js",
     "static/css/main.09b8c97e.chunk.css.map": "/snake-eyes/static/css/main.09b8c97e.chunk.css.map",
     "static/js/2.174c2d5f.chunk.js.LICENSE.txt": "/snake-eyes/static/js/2.174c2d5f.chunk.js.LICENSE.txt",
@@ -22,6 +22,6 @@
     "static/js/runtime-main.e219c39d.js",
     "static/js/2.174c2d5f.chunk.js",
     "static/css/main.09b8c97e.chunk.css",
-    "static/js/main.5996c684.chunk.js"
+    "static/js/main.04cb2190.chunk.js"
   ]
 }

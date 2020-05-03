@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/snake-eyes/precache-manifest.2f970e79e5d30590092d45da2d4ebea1.js"
+  "/snake-eyes/precache-manifest.921d285dbbcc73dcd0be43d15982c8ff.js"
 );
 
 self.addEventListener('message', (event) => {
