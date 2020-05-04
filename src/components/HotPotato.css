@@ -11,13 +11,24 @@
     gap: 20px;
 }
 
+#lobby.container, #scores.container {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    height: auto;
+}
+
+h1 {
+    font-style: italic;
+}
+
+#lobby .instructions {
+    margin-bottom: 20px;
+}
+
 main {
     grid-area: main;
     text-align: center;
-}
-
-main h1 {
-    font-style: italic;
 }
 
 button {

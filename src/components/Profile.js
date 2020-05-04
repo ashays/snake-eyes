@@ -22,15 +22,17 @@ class Profile extends React.Component {
   
     render() {
         return (
-            <div className="profile">
-                <img src={"https://api.adorable.io/avatars/75/" + this.props.id} alt="Your Avatar" />
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        Nickname
-                        <input type="text" placeholder="Dr. Sesame" value={this.state.name} onChange={this.handleChange} />
-                    </label>
-                    <input type="submit" value="Join" disabled={this.state.name === ''} />
-                </form>
+            <div className="modal-container">
+                <div className="profile modal">
+                    <img src={"https://api.adorable.io/avatars/75/" + this.props.id} alt="Your Avatar" />
+                    <form onSubmit={this.handleSubmit}>
+                        <label>
+                            Nickname
+                            <input type="text" placeholder="Dr. Sesame" value={this.state.name} onChange={this.handleChange} />
+                        </label>
+                        <input type="submit" value="Join" disabled={this.state.name === ''} />
+                    </form>
+                </div>
             </div>
         );
     }

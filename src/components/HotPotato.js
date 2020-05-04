@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import Participants from './Participants';
+import Participant from './Participant';
 import Profile from './Profile';
 import Card from './Card';
 import Timer from './Timer';
@@ -225,16 +226,27 @@ class Room extends React.Component {
         if (!this.state.isHost && !this.state.connections[this.props.match.params.id]) {
             return (<div className="loader"></div>);
         }
+        const participantsListed = Object.entries(this.state.participants).map((entry) => (
+            <Participant id={entry[0]} name={entry[1].name} />
+        ));
+        const participantScoreboard = Object.entries(this.state.participants).sort((partA, partB) => partB[1].score - partA[1].score).map((entry) => (
+            <Participant id={entry[0]} name={entry[1].name} score={entry[1].score} />
+        ));
         return (
             <Switch>
                 <Redirect exact from='/hotpotato/:id' to="/hotpotato/:id/lobby" />
                 <Route path="/hotpotato/:id/lobby">
-                    <div>
-                        <h1>Hot Potato</h1>
-                        <p>60 seconds on the clock. Take turns describing words to the other players. Correctly guess as many as you can, as quickly as you can—but don't let the timer end on your turn or you might lose it all.</p>
-                        <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
+                    <div className="container" id="lobby">
+                        <div className="instructions">
+                            <h1>Hot Potato</h1>
+                            <p>60 seconds on the clock. Take turns describing words to the other players. Correctly guess as many as you can, as quickly as you can—but don't let the timer end on your turn or you might lose it all.</p>
+                        </div>
+                        <div className="participants">{participantsListed}</div>
                         {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
                             <button type="button" onClick={this.startRound}>Start</button>
+                        }
+                        {Object.keys(this.state.participants).length < 3 &&
+                            <p>You need at least 3 players to start. Invite friends by sharing this URL</p>
                         }
                         {!this.props.player && <Profile id={this.props.id} updateName={this.props.updateName} /> }
                     </div>
@@ -243,10 +255,6 @@ class Room extends React.Component {
                     <div className="container">
                         <Chat chat={this.state.chat} participants={this.state.participants} />
                         <main>
-                            <h1>Hot Potato</h1>
-                            {Object.keys(this.state.participants).length < 2 &&
-                                <p>Invite friends to play using the URL</p>
-                            }
                             <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
                             <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
                             <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
@@ -258,11 +266,13 @@ class Room extends React.Component {
                     </div>
                 </Route>
                 <Route path="/hotpotato/:id/scores">
-                    <h1>Scores</h1>
-                    <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
-                    {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
-                        <button type="button" onClick={this.startRound}>Start</button>
-                    }
+                    <div className="container" id="scores">
+                        <h1>Scores</h1>
+                        {participantScoreboard}
+                        {this.state.isHost && !this.state.round.playing && Object.keys(this.state.participants).length > 1 &&
+                            <button type="button" onClick={this.startRound}>Next Round</button>
+                        }
+                    </div>
                 </Route>
             </Switch>
         );

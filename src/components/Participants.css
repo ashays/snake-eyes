@@ -13,20 +13,45 @@
     background: #ffd082;
 }
 
-.propic {
+img.propic {
     background: #ff7c7c;
     width: 60px;
     height: 60px;
     margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.propic img {
-    width: 100%;
 }
 
 .name {
     font-size: 10px;
     margin-top: 5px;
+}
+
+#lobby .participants, #scores .participants {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+#lobby .participant, #scores .participant {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+#lobby .propic, #scores .propic {
+    margin: 0;
+    border-radius: 0;
+    margin-right: 15px;
+}
+
+#lobby .name, #scores .name, #scores .score {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.score-line {
+    flex-grow: 1;
+    border-bottom: 5px dotted;
+    margin: 0 15px;
 }
