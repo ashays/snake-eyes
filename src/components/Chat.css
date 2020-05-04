@@ -21,3 +21,20 @@
     color: #111;
     border-radius: 10px;
 }
+
+.announcement .message {
+    color: #ffd082;
+    background: none;
+    text-align: center;
+    margin: 10px auto 0;
+    font-size: 14px;
+    width: 75%;
+}
+
+.personal {
+    align-self: flex-end;
+}
+
+.personal .sender {
+    text-align: right;
+}

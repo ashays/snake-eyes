@@ -117,6 +117,9 @@ class Room extends React.Component {
             case "chat":
                 this.addToChat(data.message, sender);
                 break;
+            case "announcement":
+                this.setState((state, props) => ({chat : [...state.chat, {message: data.announcement}]}));
+                break;    
             case "sync":
                 this.setState({[data.prop]: data.data});
                 break;
@@ -179,27 +182,30 @@ class Room extends React.Component {
         let participants = {...this.state.participants};
         let currentScore = participants[this.state.turn.pId].score;
         participants[this.state.turn.pId].score -= currentScore > 5 ? 5 : currentScore;
+        this.sendAndReceive({type: "announcement", announcement: `That's time! ${participants[this.state.turn.pId].name} loses ${currentScore > 5 ? 5 : currentScore} points.`});
         this.sendAndReceive({type: "sync", prop: "participants", data: participants});
         this.sendAndReceive({type: "redirect", location: `/hotpotato/${this.props.match.params.id}/scores`});
     }
 
     addToChat(message, sender) {
         if (this.state.isHost) {
+            this.send({type: "chat", message: {message, sender}});
+            this.setState((state, props) => ({chat : [...state.chat, {message, sender}]}));
             if (this.state.round.playing && message && message.toLowerCase() === this.state.turn.word.toLowerCase() && this.state.turn.pId !== sender) {
                 // They got the word!
                 this.sendAndReceive({type: "sound", name: "ting"});
-                // TODO send announcement
                 // Increment score
                 let participants = {...this.state.participants};
                 let points = 10 - Math.floor((new Date().getTime() - this.state.turn.start) / 1000); 
-                participants[this.state.turn.pId].score += points > 0 ? points : 1;
-                participants[sender].score += points > 0 ? points : 1;
+                points = points > 0 ? points : 1
+                participants[this.state.turn.pId].score += points;
+                participants[sender].score += points;
                 this.sendAndReceive({type: "sync", prop: "participants", data: participants});
+                // Send announcement
+                this.sendAndReceive({type: "announcement", announcement: `${this.state.participants[sender].name} guessed the word! ${this.state.participants[sender].name} and ${this.state.participants[this.state.turn.pId].name} both earned ${points} points.`});
                 // Start next turn
                 this.nextTurn();
             }
-            this.send({type: "chat", message: {message, sender}});
-            this.setState((state, props) => ({chat : [...state.chat, {message, sender}]}));
         } else {
             this.setState((state, props) => ({chat : [...state.chat, message]}));
         }
@@ -253,7 +259,7 @@ class Room extends React.Component {
                 </Route>
                 <Route path="/hotpotato/:id/play">
                     <div className="container">
-                        <Chat chat={this.state.chat} participants={this.state.participants} />
+                        <Chat player={this.props.id} chat={this.state.chat} participants={this.state.participants} />
                         <main>
                             <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
                             <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />

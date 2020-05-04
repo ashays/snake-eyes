@@ -5,12 +5,12 @@ function Chat(props) {
     let prevSender = "";
     const chat = props.chat.map((message, i) => {
         let senderText;
-        if (message.sender !== prevSender) {
+        if (message.sender && message.sender !== prevSender) {
             senderText = (<div className="sender">{props.participants[message.sender].name}</div>);
-            prevSender = message.sender;
         }
+        prevSender = message.sender;
         return (
-            <div key={i}>
+            <div key={i} className={message.sender ? (props.player === message.sender ? "personal" : "") : "announcement"}>
                 {senderText}
                 <div className="message">{message.message}</div>
             </div>
