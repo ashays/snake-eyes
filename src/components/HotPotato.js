@@ -1,7 +1,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
 import { withRouter } from "react-router-dom";
-import Participants from './Participants';
 import Participant from './Participant';
 import Profile from './Profile';
 import Card from './Card';
@@ -132,8 +131,10 @@ class Room extends React.Component {
                 break;
             case "name":
                 let participants = {...this.state.participants};
-                participants[sender].name = data.name;
-                this.sendAndReceive({type: "sync", prop: "participants", data: participants});
+                if (participants[sender]) {
+                    participants[sender].name = data.name;
+                    this.sendAndReceive({type: "sync", prop: "participants", data: participants});    
+                }
                 break;
             default:
                 console.log("Received ", data);
@@ -233,10 +234,10 @@ class Room extends React.Component {
             return (<div className="loader"></div>);
         }
         const participantsListed = Object.entries(this.state.participants).map((entry) => (
-            <Participant id={entry[0]} name={entry[1].name} />
+            <Participant key={entry[0]} id={entry[0]} name={entry[1].name} />
         ));
         const participantScoreboard = Object.entries(this.state.participants).sort((partA, partB) => partB[1].score - partA[1].score).map((entry) => (
-            <Participant id={entry[0]} name={entry[1].name} score={entry[1].score} />
+            <Participant key={entry[0]} id={entry[0]} name={entry[1].name} score={entry[1].score} />
         ));
         return (
             <Switch>
@@ -263,7 +264,7 @@ class Room extends React.Component {
                         <main>
                             <Timer start={this.state.round.start} duration={60} isPlayersTurn={this.props.id === this.state.turn.pId} />
                             <Card round={this.state.round} player={this.props.id} turn={this.state.turn} />
-                            <Participants participants={this.state.participants} turn={this.state.turn} player={this.props.id} />
+                            <div className="participants">{participantsListed}</div>
                         </main>
                         <form onSubmit={this.sendChatMessage} autoComplete="off" className="chatbar">
                             <input type="text" id="message" name="message" placeholder={this.state.round.playing ? "Enter Guess" : "Enter Message"} />

@@ -31,7 +31,7 @@ main {
     text-align: center;
 }
 
-button {
+button, .button {
     display: block;
     background: #ffd082;
     border: 0;
@@ -41,9 +41,12 @@ button {
     cursor: pointer;
     opacity: .9;
     border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    color: #111;
 }
 
-button:hover {
+button:hover, .button:hover {
     opacity: 1;
 }
 

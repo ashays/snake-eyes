@@ -1,5 +1,5 @@
 import React from 'react';
-import './Participants.css';
+import './Participant.css';
 
 function Participant(props) {
     
@@ -7,9 +7,7 @@ function Participant(props) {
         <div key={props.id} className="participant">
             <img className="propic" src={"https://api.adorable.io/avatars/75/" + props.id} alt={props.name + "'s Avatar"} />
             <div className="name">{props.name}</div>
-            {props.score !== undefined && 
-                <div className="score-line"></div>
-            }
+            <div className="line"></div>
             {props.score !== undefined && 
                 <div className="score">{props.score}</div>
             }
